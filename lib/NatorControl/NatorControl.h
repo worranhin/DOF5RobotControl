@@ -4,9 +4,9 @@
  * @brief head file of the Nators motor control module.
  * @version 0.1
  * @date 2024-07-26
- * 
+ *
  * @copyright Copyright (c) 2024
- * 
+ *
  */
 
 #ifndef NATOR_CONTROL_H
@@ -21,6 +21,10 @@
 #define NTU_AXIS_Y 2 - 1
 #define NTU_AXIS_Z 1 - 1
 #define NTU_ROTATION_X 3 - 1
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct NTU_point_s {
   int x;  // 单位: nm
@@ -50,4 +54,8 @@ void NTU_GoToPoint(NTU_Point p);
 void NTU_WaitUtilPositioned(NT_INDEX ntHandle);
 void NTU_GetSensorStatus(NT_INDEX ntHandle);
 
+#ifdef __cplusplus
+}
 #endif
+
+#endif  // NATOR_CONTROL_H

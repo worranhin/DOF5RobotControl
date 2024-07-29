@@ -5,7 +5,8 @@
 #include <thread>
 #include <atomic>
 #include "lib/NatorControl/NatorControl.h"
-#include "lib/RMDControl/RMDControl.h"
+// #include "lib/RMDControl/RMDControl.h"
+#include "RMDControl.h"
 
 enum state_enum {
   Idle,
@@ -182,8 +183,11 @@ int main(int argc, char* argv[]) {
 
   printf("-----------------------------------------------\n");
   printf("Enter numbers to go to the corresponding point.\n");
-  printf("Enter \'q\' to quit.\n");
-  printf("Available points: 0, 1, 2, 3\n");
+  printf("Enter \'q\' to quit. Enter \'s\' to stop.\n");
+  printf("Enter \'0\' to go to zero position.\n");
+  printf("Enter \'j\' for change jaw, \'k\' is the position before change jaw\n");
+  printf("Enter \'f\' for fetch ring, \'g\' is the position before fetch ring\n");
+  printf("Enter \'1\', \'2\', \'3\' to go to the assemble position.\n");
 
   std::thread inputThread(InputThread);
 
