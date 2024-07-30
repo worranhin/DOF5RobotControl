@@ -72,6 +72,7 @@ int D5R_JointsControl(const Joints j) {
   NT_GotoPositionAbsolute_S(ntHandle1, NTU_AXIS_Y, j.p3, 0);
   NT_GotoPositionAbsolute_S(ntHandle1, NTU_AXIS_Z, j.p4, 0);
   NT_GotoPositionAbsolute_S(ntHandle2, NTU_ROTATION_X, j.r5, 0);
+  // NT_StepMove_S(ntHandle2, NTU_ROTATION_X, j.r5,)
   
   return 0;
 }

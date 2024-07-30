@@ -1,0 +1,3 @@
+[submodule "lib/RMDControl"]
+	path = lib/RMDControl
+	url = ./lib/RMDControl/.git
