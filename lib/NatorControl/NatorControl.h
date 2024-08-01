@@ -48,11 +48,15 @@ extern const NTU_Point P4;
 
 int NTU_Init();
 int NTU_DeInit();
-void NTU_Stop();
-void NTU_ExitIfError(NT_STATUS st);
-void NTU_GoToPoint(NTU_Point p);
+int NTU_Stop();
+int NTU_GoToPoint(NTU_Point p);
+int NTU_ConfigStepMode(int amplitude,
+                       int frequency,
+                       int stepsPerAngle_p,
+                       int stepsPerAngle_n);
 void NTU_WaitUtilPositioned(NT_INDEX ntHandle);
-void NTU_GetSensorStatus(NT_INDEX ntHandle);
+int NTU_GetSensorStatus(NT_INDEX ntHandle);
+void NTU_ExitIfError(NT_STATUS st);
 
 #ifdef __cplusplus
 }

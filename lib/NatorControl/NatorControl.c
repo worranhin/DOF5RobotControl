@@ -10,13 +10,18 @@
  */
 #include "NatorControl.h"
 
+#define CheckError(x) \
+  if (x != NT_OK) {   \
+    return (x);       \
+  }
+
 const char Loc1[] = "usb:id:7547982319";
 const char Loc2[] = "usb:id:2250716012";
 
-const int StepsPerAngle_Positive = 197;
-const int StepsPerAngle_Negative = 285;
-const int StepModeAmplitude = 4095;
-const int StepModeFrequency = 7500;
+static int StepsPerAngle_Positive = 197;
+static int StepsPerAngle_Negative = 285;
+static int StepModeAmplitude = 4095;
+static int StepModeFrequency = 7500;
 
 static int AbsoluteAngleX = 0;
 
@@ -44,7 +49,13 @@ void NTU_ExitIfError(NT_STATUS st) {
   }
 }
 
+/**
+ * @brief Initialize Nators control, must called before use
+ *
+ * @return int 0 if success, -1 if fail
+ */
 int NTU_Init() {
+  result = NT_OK;
   /*Get the version of the DLL*/
   // result = NT_GetDLLVersion(&version);
   // if(result != NT_OK)
@@ -57,14 +68,8 @@ int NTU_Init() {
 
   /* Open the NPS in synchronous communication mode */
 
-  result = NT_OpenSystem(&ntHandle1, Loc1, "sync");
-  if (result != NT_OK) {
-    return result;
-  }
-  result = NT_OpenSystem(&ntHandle2, Loc2, "sync");
-  if (result != NT_OK) {
-    return result;
-  }
+  result += NT_OpenSystem(&ntHandle1, Loc1, "sync");
+  result += NT_OpenSystem(&ntHandle2, Loc2, "sync");
   // printf("System opened\n");
 
   // 获取可用通道数
@@ -76,13 +81,8 @@ int NTU_Init() {
   // printf("Number of Channels: %u\n", numOfChannels);
 
   // 设置使能操作杆
-  result = NT_SetHCMEnabled(ntHandle1, NT_HCM_ENABLED);
-  if (result != NT_OK)
-    return result;
-
-  result = NT_SetHCMEnabled(ntHandle2, NT_HCM_ENABLED);
-  if (result != NT_OK)
-    return result;
+  result += NT_SetHCMEnabled(ntHandle1, NT_HCM_ENABLED);
+  result += NT_SetHCMEnabled(ntHandle2, NT_HCM_ENABLED);
   // printf("HCM enabled\n");
 
   // get current position
@@ -97,26 +97,37 @@ int NTU_Init() {
   // }
   // printf("Please manually set zero before using.\n");
 
-  return 0;
+  return result == NT_OK ? 0 : -1;
 }
 
+/**
+ * @brief Close Nators System
+ *
+ * @return int 0 if success, -1 if fail
+ */
 int NTU_DeInit() {
-  result = NT_CloseSystem(ntHandle1);
+  result = NT_OK;
+  result += NT_CloseSystem(ntHandle1);
+  result += NT_CloseSystem(ntHandle2);
   // NTU_ExitIfError(result);
   // printf("System closed\n");
 
-  return result;
+  return result == NT_OK ? 0 : -1;
 }
 
 /**
  * @brief Stop motors
- * 
+ *
+ * @return int 0 if success, -1 if fail
  */
-void NTU_Stop() {
-  NT_Stop_S(ntHandle1, NTU_AXIS_X);
-  NT_Stop_S(ntHandle1, NTU_AXIS_Y);
-  NT_Stop_S(ntHandle1, NTU_AXIS_Z);
-  NT_Stop_S(ntHandle2, NTU_ROTATION_X);
+int NTU_Stop() {
+  result = NT_OK;
+  result += NT_Stop_S(ntHandle1, NTU_AXIS_X);
+  result += NT_Stop_S(ntHandle1, NTU_AXIS_Y);
+  result += NT_Stop_S(ntHandle1, NTU_AXIS_Z);
+  result += NT_Stop_S(ntHandle2, NTU_ROTATION_X);
+
+  return result == NT_OK ? 0 : -1;
 }
 
 /**
@@ -124,8 +135,11 @@ void NTU_Stop() {
  *
  * @param ntHandle
  * @param p 4d point, includes x, y, z, rx information
+ *
+ * @return int 0 if success, -1 if fail
  */
-void NTU_GoToPoint(NTU_Point p) {
+int NTU_GoToPoint(NTU_Point p) {
+  result = NT_OK;
   // NT_STATUS resultX, resultY, resultZ = 0;
   // NTU_ExitIfError(resultX =
   //                     NT_GotoPositionAbsolute_S(ntHandle, NTU_AXIS_X, p.x,
@@ -143,13 +157,36 @@ void NTU_GoToPoint(NTU_Point p) {
     steps = deltaAngleX * StepsPerAngle_Negative;
   }
 
-  NT_GotoPositionAbsolute_S(ntHandle1, NTU_AXIS_X, p.x, 0);
-  NT_GotoPositionAbsolute_S(ntHandle1, NTU_AXIS_Y, p.y, 0);
-  NT_GotoPositionAbsolute_S(ntHandle1, NTU_AXIS_Z, p.z, 0);
-  NT_StepMove_S(ntHandle2, NTU_ROTATION_X, steps, StepModeAmplitude,
-                StepModeFrequency);
+  result += NT_GotoPositionAbsolute_S(ntHandle1, NTU_AXIS_X, p.x, 0);
+  result += NT_GotoPositionAbsolute_S(ntHandle1, NTU_AXIS_Y, p.y, 0);
+  result += NT_GotoPositionAbsolute_S(ntHandle1, NTU_AXIS_Z, p.z, 0);
+  result += NT_StepMove_S(ntHandle2, NTU_ROTATION_X, steps, StepModeAmplitude,
+                          StepModeFrequency);
 
   AbsoluteAngleX = angleX;
+
+  return result == NT_OK ? 0 : -1;
+}
+
+/**
+ * @brief configure step mode
+ * 
+ * @param amplitude 
+ * @param frequency 
+ * @param stepsPerAngle_p 
+ * @param stepsPerAngle_n 
+ * @return int 0 if success, -1 if fail
+ */
+int NTU_ConfigStepMode(int amplitude,
+                       int frequency,
+                       int stepsPerAngle_p,
+                       int stepsPerAngle_n) {
+  StepsPerAngle_Positive = stepsPerAngle_p;
+  StepsPerAngle_Negative = stepsPerAngle_n;
+  StepModeAmplitude = amplitude;
+  StepModeFrequency = frequency;
+
+  return 0;
 }
 
 /**
@@ -159,43 +196,64 @@ void NTU_GoToPoint(NTU_Point p) {
  */
 void NTU_WaitUtilPositioned(NT_INDEX ntHandle) {
   unsigned int status = 0;
-  do {
-    Sleep(500);
+  NT_GetStatus_S(ntHandle, NTU_AXIS_X, &status);
+  while (status == NT_TARGET_STATUS) {
+    Sleep(100);
     NT_GetStatus_S(ntHandle, NTU_AXIS_X, &status);
-  } while (status == NT_TARGET_STATUS);
-  do {
-    Sleep(500);
+  }
+  NT_GetStatus_S(ntHandle, NTU_AXIS_Y, &status);
+  while (status == NT_TARGET_STATUS) {
+    Sleep(100);
     NT_GetStatus_S(ntHandle, NTU_AXIS_Y, &status);
-  } while (status == NT_TARGET_STATUS);
-  do {
-    Sleep(500);
+  }
+  NT_GetStatus_S(ntHandle, NTU_AXIS_Z, &status);
+  while (status == NT_TARGET_STATUS) {
+    Sleep(100);
     NT_GetStatus_S(ntHandle, NTU_AXIS_Z, &status);
-  } while (status == NT_TARGET_STATUS);
+  }
+  // do {
+  //   NT_GetStatus_S(ntHandle, NTU_AXIS_X, &status);
+  //   Sleep(500);
+  // } while (status == NT_TARGET_STATUS);
+  // do {
+  //   NT_GetStatus_S(ntHandle, NTU_AXIS_Y, &status);
+  //   Sleep(500);
+  // } while (status == NT_TARGET_STATUS);
+  // do {
+  //   NT_GetStatus_S(ntHandle, NTU_AXIS_Z, &status);
+  //   Sleep(500);
+  // } while (status == NT_TARGET_STATUS);
 }
 
 /**
  * @brief Get sensor status and print the message.
  *
  * @param ntHandle
+ * 
+ * @return int 0 if sensor disabled, 1 if sensor enabled, -1 if error.
  */
-void NTU_GetSensorStatus(NT_INDEX ntHandle) {
-  NT_STATUS result = 0;
+int NTU_GetSensorStatus(NT_INDEX ntHandle) {
   unsigned int sensorEnabled = 0;
-  NTU_ExitIfError(result = NT_GetSensorEnabled_S(ntHandle, &sensorEnabled));
+  result = NT_GetSensorEnabled_S(ntHandle, &sensorEnabled);
   if (result == NT_OK) {
-    printf("Sensor enabled: %u\n", sensorEnabled);
-    switch (sensorEnabled) {
-      case NT_SENSOR_ENABLED:
-        printf("Sensor enabled\n");
-        break;
-
-      case NT_SENSOR_DISABLED:
-        printf("Sensor disabled\n");
-        break;
-
-      default:
-        printf("Sensor unknown\n");
-        break;
-    }
+    return sensorEnabled;
+  } else {
+    return -1;
   }
+  // if (result == NT_OK) {
+  //   printf("Sensor enabled: %u\n", sensorEnabled);
+  //   switch (sensorEnabled) {
+  //     case NT_SENSOR_ENABLED:
+  //       printf("Sensor enabled\n");
+  //       break;
+
+  //     case NT_SENSOR_DISABLED:
+  //       printf("Sensor disabled\n");
+  //       break;
+
+  //     default:
+  //       printf("Sensor unknown\n");
+  //       break;
+  //   }
+  // }
 }
