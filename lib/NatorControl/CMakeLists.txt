@@ -19,3 +19,7 @@ IMPORTED_LOCATION "${PROJECT_SOURCE_DIR}/SDK/lib64/NTControl.dll"
 )
 
 target_link_libraries(NatorControl NTSDK)
+
+# add_executable(main main.c)
+
+# target_link_libraries(main NatorControl)

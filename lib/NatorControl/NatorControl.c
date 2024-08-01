@@ -46,18 +46,26 @@ void NTU_ExitIfError(NT_STATUS st) {
 
 int NTU_Init() {
   /*Get the version of the DLL*/
-  NTU_ExitIfError(NT_GetDLLVersion(&version));
-  unsigned int Major_version = (version >> 24) & 0xFF;
-  unsigned int Minor_version = (version >> 16) & 0xFF;
-  unsigned int Patch_version = version & 0xFFFF;
-  printf("The version of dll is:%d.%d.%d\n", Major_version, Minor_version,
-         Patch_version);
+  // result = NT_GetDLLVersion(&version);
+  // if(result != NT_OK)
+  //   return result;
+  // unsigned int Major_version = (version >> 24) & 0xFF;
+  // unsigned int Minor_version = (version >> 16) & 0xFF;
+  // unsigned int Patch_version = version & 0xFFFF;
+  // printf("The version of dll is:%d.%d.%d\n", Major_version, Minor_version,
+  //        Patch_version);
 
   /* Open the NPS in synchronous communication mode */
 
-  NTU_ExitIfError(NT_OpenSystem(&ntHandle1, Loc1, "sync"));
-  NTU_ExitIfError(NT_OpenSystem(&ntHandle2, Loc2, "sync"));
-  printf("System opened\n");
+  result = NT_OpenSystem(&ntHandle1, Loc1, "sync");
+  if (result != NT_OK) {
+    return result;
+  }
+  result = NT_OpenSystem(&ntHandle2, Loc2, "sync");
+  if (result != NT_OK) {
+    return result;
+  }
+  // printf("System opened\n");
 
   // 获取可用通道数
   // result = NT_GetNumberOfChannels(ntHandle1, &numOfChannels);
@@ -68,8 +76,13 @@ int NTU_Init() {
   // printf("Number of Channels: %u\n", numOfChannels);
 
   // 设置使能操作杆
-  NTU_ExitIfError(result = NT_SetHCMEnabled(ntHandle1, NT_HCM_ENABLED));
-  NTU_ExitIfError(result = NT_SetHCMEnabled(ntHandle2, NT_HCM_ENABLED));
+  result = NT_SetHCMEnabled(ntHandle1, NT_HCM_ENABLED);
+  if (result != NT_OK)
+    return result;
+
+  result = NT_SetHCMEnabled(ntHandle2, NT_HCM_ENABLED);
+  if (result != NT_OK)
+    return result;
   // printf("HCM enabled\n");
 
   // get current position
@@ -82,17 +95,17 @@ int NTU_Init() {
   //   printf("Current position: (%d, %d, %d)\n", xPosition, yPosition,
   //   zPosition);
   // }
-  printf("Please manually set zero before using.\n");
+  // printf("Please manually set zero before using.\n");
 
   return 0;
 }
 
 int NTU_DeInit() {
   result = NT_CloseSystem(ntHandle1);
-  NTU_ExitIfError(result);
-  printf("System closed\n");
+  // NTU_ExitIfError(result);
+  // printf("System closed\n");
 
-  return 0;
+  return result;
 }
 
 /**
@@ -130,11 +143,11 @@ void NTU_GoToPoint(NTU_Point p) {
     steps = deltaAngleX * StepsPerAngle_Negative;
   }
 
-  NTU_ExitIfError(NT_GotoPositionAbsolute_S(ntHandle1, NTU_AXIS_X, p.x, 0));
-  NTU_ExitIfError(NT_GotoPositionAbsolute_S(ntHandle1, NTU_AXIS_Y, p.y, 0));
-  NTU_ExitIfError(NT_GotoPositionAbsolute_S(ntHandle1, NTU_AXIS_Z, p.z, 0));
-  NTU_ExitIfError(NT_StepMove_S(ntHandle2, NTU_ROTATION_X, steps,
-                                StepModeAmplitude, StepModeFrequency));
+  NT_GotoPositionAbsolute_S(ntHandle1, NTU_AXIS_X, p.x, 0);
+  NT_GotoPositionAbsolute_S(ntHandle1, NTU_AXIS_Y, p.y, 0);
+  NT_GotoPositionAbsolute_S(ntHandle1, NTU_AXIS_Z, p.z, 0);
+  NT_StepMove_S(ntHandle2, NTU_ROTATION_X, steps, StepModeAmplitude,
+                StepModeFrequency);
 
   AbsoluteAngleX = angleX;
 }

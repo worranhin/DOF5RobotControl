@@ -14,22 +14,25 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_subdirectory(lib/RMDControl)
 add_subdirectory(lib/NatorControl)
 
+add_library(DOF5RobotControl SHARED DOF5RobotControl.cpp)
+
+target_include_directories(DOF5RobotControl PUBLIC "${PROJECT_SOURCE_DIR}" "${PROJECT_SOURCE_DIR}/lib/RMDControl" "${PROJECT_SOURCE_DIR}/lib/NatorControl")
+
+target_link_libraries(DOF5RobotControl PUBLIC RMDControl)
+target_link_libraries(DOF5RobotControl PUBLIC NatorControl)
+
+target_compile_definitions(DOF5RobotControl PRIVATE "D5R_EXPORTS")
+
 # 定义可执行文件及其源文件
 add_executable(D5R_Main main.cpp)
 
 # 链接库到可执行文件
+
+target_include_directories(D5R_Main PUBLIC "${PROJECT_SOURCE_DIR}" "${PROJECT_SOURCE_DIR}/lib/RMDControl" "${PROJECT_SOURCE_DIR}/lib/NatorControl")
+
 target_link_libraries(D5R_Main PUBLIC RMDControl)
 target_link_libraries(D5R_Main PUBLIC NatorControl)
-
-target_include_directories(D5R_Main PUBLIC "${PROJECT_SOURCE_DIR}" "${PROJECT_SOURCE_DIR}/lib/RMDControl")
-target_include_directories(D5R_Main PUBLIC "${PROJECT_SOURCE_DIR}" "${PROJECT_SOURCE_DIR}/lib/NatorControl")
-
-# 定义一个库文件
-# add_library(NatorControl STATIC lib/NatorControl/NatorControl.c)
-# add_library(RMDControl STATIC lib/RMDControl/RMDControl.c)
-
-# 添加子目录
-# add_subdirectory(subdir)
+target_link_libraries(D5R_Main PUBLIC DOF5RobotControl)
 
 # 启用测试
 # enable_testing()
@@ -46,3 +49,5 @@ target_include_directories(D5R_Main PUBLIC "${PROJECT_SOURCE_DIR}" "${PROJECT_SO
 # set(CPACK_PACKAGE_VERSION "${MyProject_VERSION}")
 # set(CPACK_PACKAGE_CONTACT "Hin <worranhin@foxmail.com>")
 # include(CPack)
+
+# enable_testing()
