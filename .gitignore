@@ -1,2 +1,4 @@
 **/build
 .vscode
+**/test/*.exe
+**/test/RMD_Control.py

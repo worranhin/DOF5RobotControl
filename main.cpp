@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
   RobotState = Idle;
   std::cout << "System initializing..." << std::endl;
 
-  D5R_Init();
+  D5R_Init("COM7");
 
   printf("-----------------------------------------------\n");
   printf("Enter numbers to go to the corresponding point.\n");
@@ -61,12 +61,10 @@ int main(int argc, char *argv[]) {
         break;
 
       case '0':
-        // RobotState = GoToPosition0;
         D5R_JointsControl(IdlePos);
         break;
 
       case 'j':
-        // RobotState = ChangeJaw1;
         D5R_JointsControl(ChangeJawPos1);
         break;
 
@@ -75,27 +73,15 @@ int main(int argc, char *argv[]) {
         break;
 
       case 'f':
-        // D5R_JointsControl(BeforeFetchRingPos1);
-        // NTU_WaitUtilPositioned(ntHandle1);
         D5R_JointsControl(FetchRingPos1);
-        // NTU_WaitUtilPositioned(ntHandle1);
-        // D5R_JointsControl(AfterFetchRingPos1);
         break;
 
       case 'g':
         D5R_JointsControl(BeforeFetchRingPos1);
-        // NTU_WaitUtilPositioned(ntHandle1);
-        // D5R_JointsControl(FetchRingPos1);
-        // NTU_WaitUtilPositioned(ntHandle1);
-        // D5R_JointsControl(AfterFetchRingPos1);
         break;
 
       case '1':
-        // D5R_JointsControl(IdlePos);
-        // NTU_WaitUtilPositioned(ntHandle1);
         D5R_JointsControl(AssemblePos1);
-        // NTU_WaitUtilPositioned(ntHandle1);
-        // D5R_JointsControl(IdlePos);
         break;
 
       case '2':
@@ -110,7 +96,6 @@ int main(int argc, char *argv[]) {
         break;
 
       case 'q':
-        // RobotState = Quit;
         exitFlag = true;
         break;
 

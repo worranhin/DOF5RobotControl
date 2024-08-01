@@ -22,7 +22,7 @@ struct Joints {
 extern "C" {
 #endif
 
-D5R_API int D5R_Init();
+D5R_API int D5R_Init(const char* RMDSerialPort);
 D5R_API int D5R_DeInit();
 D5R_API int D5R_Stop();
 D5R_API int D5R_JointsControl(const Joints j);
