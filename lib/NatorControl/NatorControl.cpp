@@ -131,6 +131,28 @@ int NTU_Stop() {
 }
 
 /**
+ * Sets the position of the motors to zero.
+ *
+ * @param x The x position to set. Defaults to 0.
+ * @param y The y position to set. Defaults to 0.
+ * @param z The z position to set. Defaults to 0.
+ * @param rx The rotation angle to set. Defaults to 0.
+ *
+ * @return 0 if the position was set successfully, -1 otherwise.
+ *
+ * @throws None.
+ */
+int NTU_SetZero(int x = 0, int y = 0, int z = 0, int rx = 0) {
+  result = NT_OK;
+  result += NT_SetPosition_S(ntHandle1, NTU_AXIS_X, x);
+  result += NT_SetPosition_S(ntHandle1, NTU_AXIS_Y, y);
+  result += NT_SetPosition_S(ntHandle1, NTU_AXIS_Z, z);
+  AbsoluteAngleX = rx;
+
+  return result == NT_OK ? 0 : -1;
+}
+
+/**
  * @brief
  *
  * @param ntHandle
@@ -170,11 +192,11 @@ int NTU_GoToPoint(NTU_Point p) {
 
 /**
  * @brief configure step mode
- * 
- * @param amplitude 
- * @param frequency 
- * @param stepsPerAngle_p 
- * @param stepsPerAngle_n 
+ *
+ * @param amplitude
+ * @param frequency
+ * @param stepsPerAngle_p
+ * @param stepsPerAngle_n
  * @return int 0 if success, -1 if fail
  */
 int NTU_ConfigStepMode(int amplitude,
@@ -229,7 +251,7 @@ void NTU_WaitUtilPositioned(NT_INDEX ntHandle) {
  * @brief Get sensor status and print the message.
  *
  * @param ntHandle
- * 
+ *
  * @return int 0 if sensor disabled, 1 if sensor enabled, -1 if error.
  */
 int NTU_GetSensorStatus(NT_INDEX ntHandle) {

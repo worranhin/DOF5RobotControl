@@ -49,6 +49,7 @@ extern const NTU_Point P4;
 int NTU_Init();
 int NTU_DeInit();
 int NTU_Stop();
+int NTU_SetZero(int x, int y, int z, int rx);
 int NTU_GoToPoint(NTU_Point p);
 int NTU_ConfigStepMode(int amplitude,
                        int frequency,
