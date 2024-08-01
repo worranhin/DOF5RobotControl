@@ -5,8 +5,10 @@ project(NatorControl VERSION 0.1) # 定义项目名称
 # # 设置C标准
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED True)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-add_library(NatorControl NatorControl.c)
+add_library(NatorControl NatorControl.cpp)
 
 add_library(NTSDK SHARED IMPORTED)
 

@@ -1,3 +1,5 @@
 **/build
 .vscode
 lib/NatorControl/*.exe
+**/test/*.exe
+**/test/RMD_Control.py
