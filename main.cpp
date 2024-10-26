@@ -61,35 +61,35 @@ int main(int argc, char *argv[]) {
         break;
 
       case '0':
-        D5R_JointsControl(IdlePos);
+        D5R_JointsMoveAbsolute(IdlePos);
         break;
 
       case 'j':
-        D5R_JointsControl(ChangeJawPos1);
+        D5R_JointsMoveAbsolute(ChangeJawPos1);
         break;
 
       case 'k':
-        D5R_JointsControl(AfterChangeJawPos1);
+        D5R_JointsMoveAbsolute(AfterChangeJawPos1);
         break;
 
       case 'f':
-        D5R_JointsControl(FetchRingPos1);
+        D5R_JointsMoveAbsolute(FetchRingPos1);
         break;
 
       case 'g':
-        D5R_JointsControl(BeforeFetchRingPos1);
+        D5R_JointsMoveAbsolute(BeforeFetchRingPos1);
         break;
 
       case '1':
-        D5R_JointsControl(AssemblePos1);
+        D5R_JointsMoveAbsolute(AssemblePos1);
         break;
 
       case '2':
-        D5R_JointsControl(AssemblePos2);
+        D5R_JointsMoveAbsolute(AssemblePos2);
         break;
 
       case '3':
-        D5R_JointsControl(AssemblePos3);
+        D5R_JointsMoveAbsolute(AssemblePos3);
         break;
 
       case '\n':

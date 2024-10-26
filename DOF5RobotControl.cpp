@@ -55,11 +55,21 @@ int D5R_SetZero(int r1, int p2, int p3, int p4, int r5) {
   return result == 0 ? 0 : -1;
 }
 
-int D5R_JointsControl(const Joints j) {
+int D5R_JointsMoveAbsolute(const Joints j) {
   NTU_Point p = {j.p2, j.p3, j.p4, j.r5};
 
-  RMD_GoToAngle(j.r1);
+  RMD_GoAngleAbsolute(j.r1);
   NTU_GoToPoint(p);
+
+  return 0;
+}
+
+D5R_API int D5R_JointsMoveRelative(const Joints j) {
+  RMD_GoAngleRelative(j.r1);
+  NT_GotoPositionRelative_S(ntHandle1, NTU_AXIS_X, j.p2, 0);
+  NT_GotoPositionRelative_S(ntHandle1, NTU_AXIS_Y, j.p3, 0);
+  NT_GotoPositionRelative_S(ntHandle1, NTU_AXIS_Z, j.p4, 0);
+  NT_GotoPositionRelative_S(ntHandle2, NTU_ROTATION_X, j.r5, 0);
 
   return 0;
 }
