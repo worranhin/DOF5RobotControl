@@ -10,7 +10,7 @@
  *
  * @throws None.
  */
-int D5R_Init(const char* RMDSerialPort) {
+int D5R_Init(const char *RMDSerialPort) {
   int result = 0;
   result += NTU_Init();
   result += RMD_Init(RMDSerialPort);
@@ -58,7 +58,7 @@ int D5R_SetZero(int r1, int p2, int p3, int p4, int r5) {
 int D5R_JointsMoveAbsolute(const Joints j) {
   NTU_Point p = {j.p2, j.p3, j.p4, j.r5};
 
-  RMD_GoAngleAbsolute(j.r1);
+  RMD_GoAngleAbsolute(j.r1, 1);
   NTU_GoToPoint(p);
 
   return 0;
@@ -74,6 +74,4 @@ D5R_API int D5R_JointsMoveRelative(const Joints j) {
   return 0;
 }
 
-int D5R_Test(int x) {
-  return x * 2;
-}
+int D5R_Test(int x) { return x * 2; }

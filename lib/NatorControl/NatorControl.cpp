@@ -20,8 +20,8 @@ const char Loc2[] = "usb:id:2250716012";
 
 static int StepsPerAngle_Positive = 197;
 static int StepsPerAngle_Negative = 285;
-static int StepModeAmplitude = 4095;
-static int StepModeFrequency = 7500;
+static int StepModeAmplitude = 4095;      //[0, 4095] but min=100 -> amplitude[0, 100]
+static int StepModeFrequency = 7500;      //[1, 18500]
 
 static int AbsoluteAngleX = 0;
 

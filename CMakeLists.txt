@@ -11,28 +11,39 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # 包含头文件目录
 # include_directories(include)
 
+# 将子目录下的CMakeLists.txt文件包括到当前的构建中
 add_subdirectory(lib/RMDControl)
 add_subdirectory(lib/NatorControl)
 
-add_library(DOF5RobotControl SHARED DOF5RobotControl.cpp)
+# 链接库 SHARED 共享库
+# add_library(DOF5RobotControl SHARED DOF5RobotControl.cpp)
 
-target_include_directories(DOF5RobotControl PUBLIC "${PROJECT_SOURCE_DIR}" "${PROJECT_SOURCE_DIR}/lib/RMDControl" "${PROJECT_SOURCE_DIR}/lib/NatorControl")
+# 设置包含目录  确保编译时可以找到头文件
+# target_include_directories(DOF5RobotControl PUBLIC "${PROJECT_SOURCE_DIR}" "${PROJECT_SOURCE_DIR}/lib/RMDControl" "${PROJECT_SOURCE_DIR}/lib/NatorControl")
 
-target_link_libraries(DOF5RobotControl PUBLIC RMDControl)
-target_link_libraries(DOF5RobotControl PUBLIC NatorControl)
+# target_link_libraries(DOF5RobotControl PUBLIC RMDControl)
+# target_link_libraries(DOF5RobotControl PUBLIC NatorControl)
 
-target_compile_definitions(DOF5RobotControl PRIVATE "D5R_EXPORTS")
+# 为指定目标添加预处理宏定义
+# target_compile_definitions(DOF5RobotControl PRIVATE "D5R_EXPORTS")
 
 # 定义可执行文件及其源文件
-add_executable(D5R_Main main.cpp)
+# add_executable(D5R_Main main.cpp)
 
 # 链接库到可执行文件
+# target_include_directories(D5R_Main PUBLIC "${PROJECT_SOURCE_DIR}" "${PROJECT_SOURCE_DIR}/lib/RMDControl" "${PROJECT_SOURCE_DIR}/lib/NatorControl")
 
-target_include_directories(D5R_Main PUBLIC "${PROJECT_SOURCE_DIR}" "${PROJECT_SOURCE_DIR}/lib/RMDControl" "${PROJECT_SOURCE_DIR}/lib/NatorControl")
+# target_link_libraries(D5R_Main PUBLIC RMDControl)
+# target_link_libraries(D5R_Main PUBLIC NatorControl)
+# target_link_libraries(D5R_Main PUBLIC DOF5RobotControl)
+add_library(D5Robot SHARED D5Robot.cpp DllApi.cpp)
+target_include_directories(D5Robot PUBLIC "${PROJECT_SOURCE_DIR}" "${PROJECT_SOURCE_DIR}/lib/RMDControl" "${PROJECT_SOURCE_DIR}/lib/NatorControl")
+target_link_libraries(D5Robot PUBLIC RMDMotor)
+target_link_libraries(D5Robot PUBLIC NatorMotor)
+target_compile_definitions(D5Robot PUBLIC "D5R_EXPORTS")
 
-target_link_libraries(D5R_Main PUBLIC RMDControl)
-target_link_libraries(D5R_Main PUBLIC NatorControl)
-target_link_libraries(D5R_Main PUBLIC DOF5RobotControl)
+add_executable(test test.cpp)
+target_link_libraries(test D5Robot)
 
 # 启用测试
 # enable_testing()

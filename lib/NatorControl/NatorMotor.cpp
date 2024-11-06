@@ -1,5 +1,5 @@
 /**
- * @file NatorController.cpp
+ * @file NatorMotor.cpp
  * @author drawal (2581478521@qq.com)
  * @brief
  * @version 0.1
@@ -8,15 +8,18 @@
  * @copyright Copyright (c) 2024
  *
  */
-#include "NatorController.h"
-
+#include "NatorMotor.h"
+namespace D5R {
 // 构造析构---------------------------------------
-Nator::Nator(std::string id) : _id(id) { _isInit = Init(); }
-Nator::~Nator() { NT_CloseSystem(_handle); }
+NatorMotor::NatorMotor(std::string id) : _id(id) { _isInit = Init(); }
+NatorMotor::~NatorMotor() { NT_CloseSystem(_handle); }
 
 // 初始化------------------------------------------
-bool Nator::Init() {
+bool NatorMotor::Init() {
   auto res = NT_OK;
+  if (_id.empty()) {
+    std::cerr << "device id is empty" << std::endl;
+  }
   res = NT_OpenSystem(&_handle, _id.c_str(), "sync");
   if (res != NT_OK) {
     std::cerr << "Failed to init device, error status: " << res << std::endl;
@@ -34,14 +37,15 @@ bool Nator::Init() {
               << std::endl;
     return false;
   }
+  _isInit = true;
   return true;
 }
 
 // 判断初始化成功------------------------------------
-bool Nator::isInit() { return _isInit; }
+bool NatorMotor::IsInit() { return _isInit; }
 
 // 设置零点-----------------------------------------
-bool Nator::SetZero() {
+bool NatorMotor::SetZero() {
   auto res = NT_OK;
   res = NT_SetPosition_S(_handle, NTU_AXIS_X, 0);
   if (res != NT_OK) {
@@ -65,7 +69,7 @@ bool Nator::SetZero() {
 }
 
 // 获取当前位置
-bool Nator::GetPosition(NTU_Point *p) {
+bool NatorMotor::GetPosition(NTU_Point *p) {
   auto res = NT_OK;
   res = NT_GetPosition_S(_handle, NTU_AXIS_X, &(p->x));
   if (res != NT_OK) {
@@ -89,7 +93,7 @@ bool Nator::GetPosition(NTU_Point *p) {
 }
 
 // 绝对移动------------------------------------------
-bool Nator::GoToPoint_A(NTU_Point p) {
+bool NatorMotor::GoToPoint_A(NTU_Point p) {
   auto res = NT_OK;
   res = NT_GotoPositionAbsolute_S(_handle, NTU_AXIS_X, p.x, 0);
   if (res != NT_OK) {
@@ -111,7 +115,7 @@ bool Nator::GoToPoint_A(NTU_Point p) {
 }
 
 // 阻塞-------------------------------------------------
-void Nator::WaitUtilPositioned() {
+void NatorMotor::WaitUtilPositioned() {
   unsigned int res = 0;
   NT_GetStatus_S(_handle, NTU_AXIS_X, &res);
   while (res == NT_TARGET_STATUS) {
@@ -131,7 +135,7 @@ void Nator::WaitUtilPositioned() {
 }
 
 // 相对移动---------------------------------------------
-bool Nator::GoToPoint_R(NTU_Point p) {
+bool NatorMotor::GoToPoint_R(NTU_Point p) {
   auto res = NT_OK;
   res = NT_GotoPositionRelative_S(_handle, NTU_AXIS_X, p.x, 0);
   if (res != NT_OK) {
@@ -153,7 +157,7 @@ bool Nator::GoToPoint_R(NTU_Point p) {
 }
 
 // 急停------------------------------------------------
-bool Nator::Stop() {
+bool NatorMotor::Stop() {
   auto res = NT_OK;
   res = NT_Stop_S(_handle, NTU_AXIS_X);
   if (res != NT_OK) {
@@ -172,3 +176,4 @@ bool Nator::Stop() {
   }
   return true;
 }
+} // namespace D5R

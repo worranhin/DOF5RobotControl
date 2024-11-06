@@ -1,5 +1,5 @@
 /**
- * @file NatorController.h
+ * @file NatorMotor.h
  * @author drawal (2581478521@qq.com)
  * @brief
  * @version 0.1
@@ -15,6 +15,7 @@
 #include <string>
 #include <windows.h>
 
+namespace D5R {
 struct NTU_Point {
   int x; // 单位: nm
   int y;
@@ -25,13 +26,13 @@ struct NTU_Point {
 #define NTU_AXIS_Y 2 - 1
 #define NTU_AXIS_Z 1 - 1
 
-class Nator {
+class NatorMotor {
 public:
-  Nator(std::string id);
-  ~Nator();
+  NatorMotor(std::string id);
+  ~NatorMotor();
   bool Init();
   bool SetZero();
-  bool isInit();
+  bool IsInit();
   bool GetPosition(NTU_Point *p);
   bool GoToPoint_A(NTU_Point p);
   void WaitUtilPositioned();
@@ -44,3 +45,4 @@ private:
   bool _isInit;
   unsigned int _status;
 };
+} // namespace D5R
