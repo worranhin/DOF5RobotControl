@@ -3,11 +3,13 @@
 namespace D5R {
 D5Robot::D5Robot(const char *serialPort, std::string natorID, uint8_t topRMDID,
                  uint8_t botRMDID)
-    : _port(serialPort), _NatorMotor(natorID),
+    : _port(serialPort), 
+      _NatorMotor(natorID),
       _topRMDMotor(_port.GetHandle(), topRMDID),
       _botRMDMotor(_port.GetHandle(), botRMDID) {
   _isInit =
       _NatorMotor.IsInit() && _topRMDMotor.isInit() && _botRMDMotor.isInit();
+      
 }
 D5Robot::~D5Robot() {}
 
