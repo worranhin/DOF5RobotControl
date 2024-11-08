@@ -28,6 +28,7 @@ D5R_API int D5R_Stop();
 D5R_API int D5R_SetZero(int r1 = 0, int p2 = 0, int p3 = 0, int p4 = 0, int r5 = 0);
 D5R_API int D5R_JointsMoveAbsolute(const Joints j);
 D5R_API int D5R_JointsMoveRelative(const Joints j);
+D5R_API int D5R_SetAccumulateRelative(bool accumulate);
 D5R_API int D5R_Test(int x);
 
 #ifdef __cplusplus
